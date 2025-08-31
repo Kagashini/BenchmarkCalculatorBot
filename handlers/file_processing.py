@@ -26,7 +26,7 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
     """Обработка benchmark файла с автоматическим определением нескольких файлов CapFrame"""
     try:
         # Проверяем размер файла (ограничение Telegram - 50 МБ для обычных пользователей)
-        if message.document.file_size > 50 * 1024 * 1024:
+        if message.document.file_size > 100 * 1024 * 1024:
             await message.answer(
                 "❌ Файл слишком большой. Максимальный размер: 50MB (ограничение Telegram)"
             )
