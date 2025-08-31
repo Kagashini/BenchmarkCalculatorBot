@@ -7,9 +7,12 @@ load_dotenv()
 # Токен бота
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Параметры вебхука
+# Параметры кастомного API сервера
+CUSTOM_API_SERVER = os.getenv("CUSTOM_API_SERVER")
+
+# Параметры вебхука (если используются)
 WEBHOOK_HOST = os.getenv("WEBHOOK_HOST")
-WEBHOOK_PORT = int(os.getenv("WEBHOOK_PORT"))
+WEBHOOK_PORT = int(os.getenv("WEBHOOK_PORT")) if os.getenv("WEBHOOK_PORT") else 8000
 WEBHOOK_PATH = os.getenv("WEBHOOK_PATH", "/")
 if BOT_TOKEN and BOT_TOKEN != "your_actual_bot_token_here":
     WEBHOOK_PATH = os.getenv("WEBHOOK_PATH", f"/{BOT_TOKEN}")

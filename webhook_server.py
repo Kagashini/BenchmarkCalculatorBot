@@ -9,11 +9,14 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import Update
 from aiogram.exceptions import TelegramUnauthorizedError
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.client.telegram import TelegramAPIServer
 import ssl
 import os
 
 from config.settings import (
     BOT_TOKEN,
+    CUSTOM_API_SERVER,
     WEBHOOK_URL,
     WEBHOOK_PATH,
     WEBHOOK_HOST,
@@ -30,8 +33,20 @@ if not BOT_TOKEN or BOT_TOKEN == "your_actual_bot_token_here":
         "Не задан действительный токен бота. Пожалуйста, укажите корректный BOT_TOKEN в файле .env"
     )
 else:
-    # Создаем бота и диспетчер
-    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    # Создаем сессию с кастомным API сервером, если указан
+    if CUSTOM_API_SERVER:
+        session = AiohttpSession(api=TelegramAPIServer.from_base(CUSTOM_API_SERVER))
+        bot = Bot(
+            token=BOT_TOKEN,
+            session=session,
+            default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+        )
+        logging.info(f"Используется кастомный API сервер: {CUSTOM_API_SERVER}")
+    else:
+        bot = Bot(
+            token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+        )
+
     dp = Dispatcher()
 
     # Регистрируем обработчики
@@ -110,3 +125,20 @@ async def telegram_webhook(request: Request, token: str):
         raise HTTPException(status_code=500, detail="Ошибка обработки вебхука")
 
 
+def generate_ssl_context():
+    """Генерация SSL контекста для сервера"""
+    cert_dir = "certs"
+    cert_path = os.path.join(cert_dir, "localhost.crt")
+    key_path = os.path.join(cert_dir, "localhost.key")
+
+    # Проверяем существование сертификатов
+    if not os.path.exists(cert_path) or not os.path.exists(key_path):
+        logging.warning(
+            "SSL сертификаты не найдены. Создайте их с помощью ssl_generator.py"
+        )
+        return None
+
+    # Создаем SSL контекст
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load_cert_chain(cert_path, key_path)
+    return ssl_context

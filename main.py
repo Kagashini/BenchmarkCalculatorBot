@@ -6,9 +6,12 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.exceptions import TelegramUnauthorizedError
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.client.telegram import TelegramAPIServer
 
 from config.settings import (
     BOT_TOKEN,
+    CUSTOM_API_SERVER,
     WEBHOOK_URL,
     WEBHOOK_PATH,
     WEBHOOK_HOST,
@@ -29,8 +32,16 @@ async def start_polling():
         logging.error("Не задан действительный токен бота. Пожалуйста, укажите корректный BOT_TOKEN в файле .env")
         return
 
-    # Создаем бота и диспетчер
-    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    # Создаем сессию с кастомным API сервером, если указан
+    if CUSTOM_API_SERVER:
+        session = AiohttpSession(
+            api=TelegramAPIServer.from_base(CUSTOM_API_SERVER)
+        )
+        bot = Bot(token=BOT_TOKEN, session=session, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+        logging.info(f"Используется кастомный API сервер: {CUSTOM_API_SERVER}")
+    else:
+        bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+
     dp = Dispatcher()
 
     # Регистрируем обработчики
