@@ -3,12 +3,11 @@ from fastapi.responses import PlainTextResponse
 from contextlib import asynccontextmanager
 import asyncio
 import logging
-import uvicorn
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import Update
-from aiogram.exceptions import TelegramUnauthorizedError
+from aiogram.exceptions import TelegramUnauthorizedError, TelegramNetworkError
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
 import ssl
@@ -35,6 +34,9 @@ if not BOT_TOKEN or BOT_TOKEN == "your_actual_bot_token_here":
 else:
     # Создаем сессию с кастомным API сервером, если указан
     if CUSTOM_API_SERVER:
+        logging.info(
+            f"Попытка подключения к кастомному API серверу: {CUSTOM_API_SERVER}"
+        )
         session = AiohttpSession(api=TelegramAPIServer.from_base(CUSTOM_API_SERVER))
         bot = Bot(
             token=BOT_TOKEN,
@@ -43,6 +45,7 @@ else:
         )
         logging.info(f"Используется кастомный API сервер: {CUSTOM_API_SERVER}")
     else:
+        logging.info("Используется стандартный API сервер Telegram")
         bot = Bot(
             token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
@@ -71,8 +74,17 @@ async def lifespan(app: FastAPI):
         logging.error(
             "Неверный токен бота. Пожалуйста, проверьте BOT_TOKEN в файле .env"
         )
+    except TelegramNetworkError as e:
+        logging.error(f"Ошибка сети при установке вебхука: {e}")
+        if CUSTOM_API_SERVER:
+            logging.error(
+                f"Проверьте, запущен ли локальный сервер на {CUSTOM_API_SERVER}"
+            )
     except Exception as e:
         logging.error(f"Ошибка при установке вебхука: {e}")
+        import traceback
+
+        logging.error(f"Трассировка ошибки: {traceback.format_exc()}")
 
     yield
 
@@ -122,6 +134,9 @@ async def telegram_webhook(request: Request, token: str):
         return {"status": "ok"}
     except Exception as e:
         logging.error(f"Ошибка обработки вебхука: {e}")
+        import traceback
+
+        logging.error(f"Трассировка ошибки: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail="Ошибка обработки вебхука")
 
 
