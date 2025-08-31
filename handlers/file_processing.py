@@ -8,6 +8,7 @@ from services.processor import BenchmarkProcessor
 from utils.file_utils import save_uploaded_file, cleanup_temp_files
 from parsers import detect_parser_type
 import asyncio
+import os
 
 processor = BenchmarkProcessor()
 
@@ -31,8 +32,16 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
             )
             return
 
-        # Сохраняем файл
-        file_path = await save_uploaded_file(message.document, bot)
+        # Получаем информацию о файле
+        file_info = await bot.get_file(message.document.file_id)
+
+        # Проверяем, является ли путь абсолютным (локальный режим)
+        if os.path.isabs(file_info.file_path):
+            # В локальном режиме file_path уже содержит абсолютный путь к файлу
+            file_path = file_info.file_path
+        else:
+            # В стандартном режиме скачиваем файл
+            file_path = await save_uploaded_file(message.document, bot)
 
         # Определяем тип парсера
         with open(file_path, "r", encoding="utf-8") as f:
@@ -65,7 +74,9 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
             await message.answer(
                 f"❌ Ошибка обработки ({result['parser_type']}): {result['error']}"
             )
-            cleanup_temp_files(file_path)
+            # Очищаем временные файлы только в стандартном режиме
+            if not os.path.isabs(file_path):
+                cleanup_temp_files(file_path)
             return
 
         # Отправляем результаты
@@ -96,7 +107,9 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
             csv_file = BufferedInputFile(csv_data, filename=result["csv_filename"])
             await message.answer_document(document=csv_file, caption="📄 CSV отчет")
 
-        cleanup_temp_files(file_path)
+        # Очищаем временные файлы только в стандартном режиме
+        if not os.path.isabs(file_path):
+            cleanup_temp_files(file_path)
 
     except Exception as e:
         await message.answer("❌ Произошла ошибка при обработке файла")
@@ -124,7 +137,10 @@ async def process_capframe_session(
             await message.answer(
                 f"❌ Ошибка обработки CapFrame файлов: {result['error']}"
             )
-            await cleanup_temp_files(*session)
+            # Очищаем временные файлы только в стандартном режиме
+            for file_path in session:
+                if not os.path.isabs(file_path):
+                    cleanup_temp_files(file_path)
             # Очищаем сессию
             if user_id in capframe_sessions:
                 del capframe_sessions[user_id]
@@ -162,8 +178,10 @@ async def process_capframe_session(
                 document=csv_file, caption="📄 CSV отчет (объединенный)"
             )
 
-        # Очищаем временные файлы
-        cleanup_temp_files(*session)
+        # Очищаем временные файлы только в стандартном режиме
+        for file_path in session:
+            if not os.path.isabs(file_path):
+                cleanup_temp_files(file_path)
 
         # Очищаем сессию
         if user_id in capframe_sessions:
@@ -174,7 +192,10 @@ async def process_capframe_session(
         print(f"Error: {e}")
         # Очищаем сессию в случае ошибки
         if user_id in capframe_sessions:
-            cleanup_temp_files(*capframe_sessions[user_id])
+            # Очищаем временные файлы только в стандартном режиме
+            for file_path in capframe_sessions[user_id]:
+                if not os.path.isabs(file_path):
+                    cleanup_temp_files(file_path)
             del capframe_sessions[user_id]
 
 

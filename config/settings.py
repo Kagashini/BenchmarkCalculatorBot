@@ -29,3 +29,9 @@ TEMP_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp_files"
 
 # Создаем временную директорию, если её нет
 os.makedirs(TEMP_DIR, exist_ok=True)
+
+# Если используется локальный API сервер, определяем путь к директории с файлами
+if CUSTOM_API_SERVER and BOT_TOKEN:
+    LOCAL_API_FILES_DIR = os.path.join(os.getcwd(), BOT_TOKEN)
+else:
+    LOCAL_API_FILES_DIR = None
