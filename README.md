@@ -28,27 +28,27 @@
 ### Установка
 
 1. Клонируйте репозиторий:
-
+```
 bash git clone <repository-url>   
 cd BenchmarkCalculatorBot
-
+```
 2. Установите зависимости:
-
+```
 bash   
 pip install -r requirements.txt
-
+```
 3. Создайте файл `.env` на основе `.env.example` и настройте токен бота:
-
+```
 env   
 BOT_TOKEN=your_actual_bot_token_here
-
+```
 ### Использование
 
 1. Запустите бот:
-
+```
 bash   
 python main.py   
-
+```
 2. В Telegram найдите своего бота и отправьте ему файл бенчмарка.
 
 3. Бот автоматически определит формат, обработает данные и вернет подробные отчеты.
@@ -67,7 +67,7 @@ python main.py
    - Гибкая обработка данных
 
 ## Структура проекта
-
+```
 BenchmarkCalculatorBot/   
 ├── config/ # Файлы конфигурации   
 ├── handlers/ # Обработчики сообщений Telegram   
@@ -77,7 +77,7 @@ BenchmarkCalculatorBot/
 ├── main.py # Точка входа в приложение   
 ├── webhook_server.py # Реализация сервера вебхуков   
 └── ssl_generator.py # Генератор SSL-сертификатов для вебхука   
-
+```
 ## Лицензия
 
 Этот проект лицензирован по лицензии MIT - подробности смотрите в файле LICENSE.
