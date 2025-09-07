@@ -23,7 +23,7 @@ async def cmd_start(message: Message):
         "• MSI Afterburner\n"
         "• Custom format\n\n"
         "Просто отправьте мне benchmark файл!\n\n"
-        "Для CapFrame файлов автоматически объединяются несколько файлов в один отчет.",
+        "Для CapFrameX файлов автоматически объединяются несколько файлов в один отчет.",
         reply_markup=keyboard,
     )
 

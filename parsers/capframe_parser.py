@@ -128,7 +128,7 @@ class CapFrameParser(BaseParser):
                 return False
 
             data = json.loads(stripped_content)
-            # Проверяем, есть ли характерные поля CapFrame
+            # Проверяем, есть ли характерные поля CapFrameX
             return (
                 "Hash" in data
                 and "Info" in data

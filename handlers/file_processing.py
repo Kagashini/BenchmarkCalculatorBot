@@ -23,9 +23,9 @@ capframe_sessions = {}
 
 
 async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
-    """Обработка benchmark файла с автоматическим определением нескольких файлов CapFrame"""
+    """Обработка benchmark файла с автоматическим определением нескольких файлов CapFrameX"""
     try:
-        # Проверяем размер файла (ограничение Telegram - 50 МБ для обычных пользователей)
+        # Проверяем размер файла (ограничение Telegram - 50 МБ для обычных пользователей и 2GB для Webhook)
         if message.document.file_size > 2000 * 1024 * 1024:
             await message.answer(
                 "❌ Файл слишком большой. Максимальный размер: 2 GB"
@@ -48,8 +48,8 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
             content = f.read()
         parser_type = detect_parser_type(content)
 
-        # Проверяем, является ли файл CapFrame
-        if parser_type == "capframe":
+        # Проверяем, является ли файл CapFrameX
+        if parser_type == "capframex":
             # Получаем текущую сессию пользователя
             user_id = message.from_user.id
             session = capframe_sessions.get(user_id, [])
@@ -91,15 +91,15 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
         csv_data = result["reports"]["csv_data"]
 
         # Проверяем размер файлов перед отправкой
-        if len(xlsx_data) > 50 * 1024 * 1024:  # 50 MB
+        if len(xlsx_data) > 2000 * 1024 * 1024:  # 50 MB
             await message.answer(
-                "❌ XLSX отчет слишком большой для отправки через Telegram (более 50MB)"
+                "❌ XLSX отчет слишком большой для отправки через Telegram (более 2GB)"
             )
         else:
             xlsx_file = BufferedInputFile(xlsx_data, filename=result["xlsx_filename"])
             await message.answer_document(document=xlsx_file, caption="📊 XLSX отчет")
 
-        if len(csv_data) > 50 * 1024 * 1024:  # 50 MB
+        if len(csv_data) > 2000 * 1024 * 1024:  # 2 GB
             await message.answer(
                 "❌ CSV отчет слишком большой для отправки через Telegram (более 2GB)"
             )
@@ -131,11 +131,11 @@ async def process_capframe_session(
 
     try:
         # Обрабатываем все CapFrame файлы как один набор
-        result = await processor.process_files(session, "capframe")
+        result = await processor.process_files(session, "capframex")
 
         if not result["success"]:
             await message.answer(
-                f"❌ Ошибка обработки CapFrame файлов: {result['error']}"
+                f"❌ Ошибка обработки CapFrameX файлов: {result['error']}"
             )
             # Очищаем временные файлы только в стандартном режиме
             for file_path in session:
@@ -158,9 +158,9 @@ async def process_capframe_session(
         csv_data = result["reports"]["csv_data"]
 
         # Проверяем размер файлов перед отправкой
-        if len(xlsx_data) > 50 * 1024 * 1024:  # 50 MB
+        if len(xlsx_data) > 2000 * 1024 * 1024:  # 2GB
             await message.answer(
-                "❌ XLSX отчет слишком большой для отправки через Telegram (более 50MB)"
+                "❌ XLSX отчет слишком большой для отправки через Telegram (более 2GB)"
             )
         else:
             xlsx_file = BufferedInputFile(xlsx_data, filename=result["xlsx_filename"])
@@ -168,7 +168,7 @@ async def process_capframe_session(
                 document=xlsx_file, caption="📊 XLSX отчет (объединенный)"
             )
 
-        if len(csv_data) > 50 * 1024 * 1024:  # 50 MB
+        if len(csv_data) > 2000 * 1024 * 1024:  # 2GB
             await message.answer(
                 "❌ CSV отчет слишком большой для отправки через Telegram (более 2GB)"
             )
@@ -188,7 +188,7 @@ async def process_capframe_session(
             del capframe_sessions[user_id]
 
     except Exception as e:
-        await message.answer("❌ Произошла ошибка при обработке CapFrame файлов")
+        await message.answer("❌ Произошла ошибка при обработке CapFrameX файлов")
         print(f"Error: {e}")
         # Очищаем сессию в случае ошибки
         if user_id in capframe_sessions:
