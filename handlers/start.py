@@ -17,7 +17,7 @@ async def cmd_start(message: Message):
     )
 
     await message.answer(
-        "🎮 Multi-Format Benchmark Processor\n\n"
+        "🎮 Multi-Format Benchmark Bot\n\n"
         "Поддерживаемые форматы:\n"
         "• CapFrameX benchmark\n"
         "• MSI Afterburner\n"
@@ -47,7 +47,7 @@ async def cmd_help(message: Message):
 async def cmd_about(message: Message):
     """Обработчик кнопки 'О боте'"""
     await message.answer(
-        "🎮 Multi-Format Benchmark Processor\n\n"
+        "🎮 Multi-Format Benchmark Bot\n\n"
         "Поддерживаемые форматы:\n"
         "• CapFrameX benchmark\n"
         "• MSI Afterburner\n"
