@@ -1,3 +1,5 @@
+For english readme: [README-EN.md](README-EN.md)
+
 # Benchmark Calculator Bot
 
 Телеграм-бот для обработки и анализа данных бенчмарков из различных источников.
