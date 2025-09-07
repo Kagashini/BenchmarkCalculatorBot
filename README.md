@@ -40,8 +40,18 @@ pip install -r requirements.txt
 3. Создайте файл `.env` на основе `.env.example` и настройте токен бота:
 ```
 env   
-BOT_TOKEN=your_actual_bot_token_here
+BOT_TOKEN=your_actual_bot_token_here   
+CUSTOM_API_SERVER=your_host:your_port   
 ```
+
+### Конфигурация
+
+Бот может быть настроен с помощью переменных окружения в файле `.env`:
+
+- [BOT_TOKEN] - Токен вашего Telegram бота
+- [RUN_MODE] - Режим работы: "polling" или "webhook" (по умолчанию: "polling")
+- [CUSTOM_API_SERVER] - URL пользовательского сервера API Telegram (необязательно)
+
 ### Использование
 
 1. Запустите бот:
