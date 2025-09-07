@@ -20,7 +20,6 @@ async def cmd_start(message: Message):
         "🎮 Multi-Format Benchmark Processor\n\n"
         "Поддерживаемые форматы:\n"
         "• CapFrameX benchmark\n"
-        "• FRAPS logs\n"
         "• MSI Afterburner\n"
         "• Custom format\n\n"
         "Просто отправьте мне benchmark файл!\n\n"
@@ -51,7 +50,6 @@ async def cmd_about(message: Message):
         "🎮 Multi-Format Benchmark Processor\n\n"
         "Поддерживаемые форматы:\n"
         "• CapFrameX benchmark\n"
-        "• FRAPS logs\n"
         "• MSI Afterburner\n"
         "• Custom format\n\n"
         "Особенности:\n"
@@ -72,7 +70,7 @@ async def cmd_parsers_info(message: Message):
         response += f"• {name}: {description}\n"
 
     response += "\n📁 Бот автоматически определит формат вашего файла!\n"
-    response += "Для CapFrame файлов автоматически объединяются несколько файлов."
+    response += "Для CapFrameX файлов автоматически объединяются несколько файлов."
     await message.answer(response)
 
 
@@ -83,8 +81,6 @@ async def cmd_formats_info(message: Message):
         "<b>CapFrameX</b>\n"
         "Файлы с данными фреймрейтов от CapFrameX\n"
         "Особенности: автоматическое объединение нескольких файлов\n\n"
-        "<b>FRAPS</b>\n"
-        "Логи производительности от FRAPS\n\n"
         "<b>MSI Afterburner</b>\n"
         "Файл benchmark от MSI Afterburner + RivaTuner Statistics Server\n\n"
         "<b>Custom Format</b>\n"

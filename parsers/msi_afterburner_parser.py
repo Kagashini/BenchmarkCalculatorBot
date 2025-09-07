@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-import xlsxwriter
-from xlsxwriter.workbook import Workbook
 from datetime import datetime
 from .base_parser import BaseParser
 from typing import List, Dict, Any

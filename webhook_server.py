@@ -1,25 +1,18 @@
 import asyncio
 import logging
 import argparse
-from pathlib import Path
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.exceptions import TelegramUnauthorizedError, TelegramNetworkError
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
-from aiogram.types import FSInputFile
 
 from config.settings import (
     BOT_TOKEN,
-    CUSTOM_API_SERVER,
-    WEBHOOK_URL,
-    WEBHOOK_PATH,
-    WEBHOOK_HOST,
-    WEBHOOK_PORT,
-    TEMP_DIR,
+    CUSTOM_API_SERVER
 )
-from handlers import start, file_processing, common
+from handlers import start, file_processing
 
 # Включаем логирование
 logging.basicConfig(level=logging.INFO)
@@ -60,7 +53,6 @@ async def start_polling():
         # Регистрируем обработчики
         start.register_start_handlers(dp)
         file_processing.register_file_handlers(dp)
-        common.register_common_handlers(dp)
 
         # Проверяем подключение
         bot_info = await bot.get_me()

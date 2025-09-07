@@ -10,13 +10,9 @@ from aiogram.client.telegram import TelegramAPIServer
 
 from config.settings import (
     BOT_TOKEN,
-    CUSTOM_API_SERVER,
-    WEBHOOK_URL,
-    WEBHOOK_PATH,
-    WEBHOOK_HOST,
-    WEBHOOK_PORT,
+    CUSTOM_API_SERVER
 )
-from handlers import start, file_processing, common
+from handlers import start, file_processing
 
 # Включаем логирование
 logging.basicConfig(level=logging.INFO)
@@ -57,7 +53,6 @@ async def start_polling():
         # Регистрируем обработчики
         start.register_start_handlers(dp)
         file_processing.register_file_handlers(dp)
-        common.register_common_handlers(dp)
 
         # Проверяем подключение
         bot_info = await bot.get_me()

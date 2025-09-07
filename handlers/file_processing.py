@@ -26,9 +26,9 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
     """Обработка benchmark файла с автоматическим определением нескольких файлов CapFrame"""
     try:
         # Проверяем размер файла (ограничение Telegram - 50 МБ для обычных пользователей)
-        if message.document.file_size > 100 * 1024 * 1024:
+        if message.document.file_size > 2000 * 1024 * 1024:
             await message.answer(
-                "❌ Файл слишком большой. Максимальный размер: 50MB (ограничение Telegram)"
+                "❌ Файл слишком большой. Максимальный размер: 2 GB"
             )
             return
 
@@ -101,7 +101,7 @@ async def handle_benchmark_file(message: Message, state: FSMContext, bot: Bot):
 
         if len(csv_data) > 50 * 1024 * 1024:  # 50 MB
             await message.answer(
-                "❌ CSV отчет слишком большой для отправки через Telegram (более 50MB)"
+                "❌ CSV отчет слишком большой для отправки через Telegram (более 2GB)"
             )
         else:
             csv_file = BufferedInputFile(csv_data, filename=result["csv_filename"])
@@ -170,7 +170,7 @@ async def process_capframe_session(
 
         if len(csv_data) > 50 * 1024 * 1024:  # 50 MB
             await message.answer(
-                "❌ CSV отчет слишком большой для отправки через Telegram (более 50MB)"
+                "❌ CSV отчет слишком большой для отправки через Telegram (более 2GB)"
             )
         else:
             csv_file = BufferedInputFile(csv_data, filename=result["csv_filename"])

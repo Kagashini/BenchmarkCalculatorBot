@@ -5,14 +5,12 @@
 
 from .base_parser import BaseParser
 from .capframe_parser import CapFrameParser
-from .fraps_parser import FrapsParser
 from .msi_afterburner_parser import MSIAfterburnerParser
 from .custom_parser import CustomParser
 
 # Реестр всех доступных парсеров
 PARSER_REGISTRY = {
     "capframe": CapFrameParser,
-    "fraps": FrapsParser,
     "msi_afterburner": MSIAfterburnerParser,
     "custom": CustomParser,
 }
@@ -44,8 +42,6 @@ def detect_parser_type(file_content: str) -> str:
     # Эвристики для определения формата
     if any("capframe" in line.lower() for line in lines):
         return "capframe"
-    elif any("fraps" in line.lower() for line in lines):
-        return "fraps"
     elif any("completed," in line and "frames" in line and ".exe" in line for line in lines):
         # Более точная проверка для MSI Afterburner
         return "msi_afterburner"
